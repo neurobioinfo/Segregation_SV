@@ -51,3 +51,4 @@ Segregation_SV works by first converting individual per-sample CNV calls from mu
 
 # Notes:
 - At each step, CNV merging proceeds iteratively from smallest to largest, to ensure that small CNVs are not accidentally excluded.
+- Pedigree file format is described [here](https://gatk.broadinstitute.org/hc/en-us/articles/360035531972-PED-Pedigree-format)
