@@ -1,6 +1,10 @@
 # Segregation_SV
 A tool to flexibly merge Copy Number Variants and other Structural Variants from multiple callers in multiple samples, annotate with various external data sources, and perform family segregation
 
+## Requirements
+any python2
+
+## Arguments
 ```
 usage: segregation.py [-h] -i INPUTDATA -p PEDFILE [-r RUNNAME]
                       [-a CUSTOMANNODATA] [-o OUTFILE] [-cfg CFGFILE] [-eda]
@@ -46,7 +50,7 @@ mandatory arguments:
                         /path/to/ped_file
 ```
 
-# Principle
+## Principle
 Segregation_SV works by first converting individual per-sample CNV calls from multiple callers into “consensus CNVs” based on the principle of reciprocal overlap (RO). This merging is done in 3 successive steps:
 
 - Step 1: calls by the same caller in the same sample are merged if there is any overlap between them (>0% RO), to avoid call fragmentation. 
@@ -55,9 +59,10 @@ Segregation_SV works by first converting individual per-sample CNV calls from mu
 
 Finally for each consensus CNV, sample counts are broken down into affected vs nonaffected and family vs non-family, for each family as defined by an input pedigree file
 
-# Notes:
+## Notes:
 - At each step, CNV merging proceeds iteratively from smallest to largest, to ensure that small CNVs are not accidentally excluded.
 - Pedigree file format is described [here](https://gatk.broadinstitute.org/hc/en-us/articles/360035531972-PED-Pedigree-format)
-- The config file (specified with command argument -cfg|--config_file) can be used to very precisely tailor the variant merging rules. Different RO values can be set for each variant merging step (steps 1-3 above), as well as for different variant types (deletion, duplication, inversion and translocation) within each merging step.
+- The config file (specified with command argument `-cfg|--config_file`) can be used to very precisely tailor the variant merging rules. Different RO values can be set for each variant merging step (steps 1-3 above), as well as for different variant types (deletion, duplication, inversion and translocation) within each merging step.
 - Variant merging for translocations is not supported. Any such variants are simply passed along intact through all merging steps into the final outputs, though if >1 sample has a called translocation with _exactly_ the same boundaries, this will be reflected in the final sample counts for that variant. 
-- Annotations included by default are: 
+- Annotations included by default are: DGV_inclusive, DGV_stringent, 1000 Genomes SV, Segmental Duplications (UCSC), Micro Exons, RepeatMaster (UCSC), RefSeq Genes, RefSeq Genes exons. Default annotations are loaded as a python pickle. _GRCh37 ONLY_
+- Python pickle-based annotation not tested on many different systems; may cause fatal errors in some configurations. Should this occur, annotation can simply be skipped using the `-eda|--exclude_default_annotations` command switch. Alternately, users can supply their own custom annotations (in .bed or .bedpe format) using the `-a|--custom_annotation_file` argument.
